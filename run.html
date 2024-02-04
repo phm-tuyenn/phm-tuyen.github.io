@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 7.6.4.1 (Windows)"/>
+	<meta name="created" content="2024-02-04T19:59:05.432000000"/>
+	<meta name="changed" content="2024-02-04T20:29:26.578000000"/>
+	<style type="text/css">
+		@page { size: 21.01cm 29.69cm; margin: 2.01cm }
+		p { line-height: 115%; margin-bottom: 0.25cm; background: transparent }
+		pre.cjk { font-family: "NSimSun", monospace }
+	</style>
+</head>
+<body lang="vi-VN" dir="ltr"><p style="margin-bottom: 0cm"><font face="Monospace"><b>Drivetrain
+configuration:</b></font></p>
+<p style="margin-bottom: 0cm"><font face="Monospace"><font size="2" style="font-size: 10pt">static
+final double HD_COUNTS_PER_REV = 28;</font></font></p>
+<p style="margin-bottom: 0cm"><font face="Monospace"><font size="2" style="font-size: 10pt">static
+final double DRIVE_GEAR_REDUCTION = 20.15293; </font></font>
+</p>
+<p style="margin-bottom: 0cm"><font face="Monospace"><font size="2" style="font-size: 10pt">static
+final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI; </font></font>
+</p>
+<p style="margin-bottom: 0cm"><font face="Monospace"><font size="2" style="font-size: 10pt">static
+final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV *
+DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;</font></font></p>
+<p style="margin-bottom: 0cm"><font face="Monospace"><b>Motion
+function:</b></font></p>
+<pre class="western"><font face="Monospace">private void moveForward(int howMuch, double speed) {</font>
+ <font face="Monospace">// howMuch is in mm. A negative howMuch moves backward.</font>
+
+ <font face="Monospace">// fetch motor positions</font>
+ <font face="Monospace">lfPos = frontLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rfPos = frontRightMotor.getCurrentPosition();</font>
+ <font face="Monospace">lrPos = backLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rrPos = backRightMotor.getCurrentPosition();</font>
+
+ <font face="Monospace">// calculate new targets</font>
+ <font face="Monospace">lfPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">rfPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">lrPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">rrPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+
+ <font face="Monospace">// move robot to new position</font>
+ <font face="Monospace">frontLeftMotor.setTargetPosition(lfPos);</font>
+ <font face="Monospace">frontRightMotor.setTargetPosition(rfPos);</font>
+ <font face="Monospace">backLeftMotor.setTargetPosition(lrPos);</font>
+ <font face="Monospace">backRightMotor.setTargetPosition(rrPos);</font>
+ <font face="Monospace">frontLeftMotor.setPower(speed);</font>
+ <font face="Monospace">frontRightMotor.setPower(speed);</font>
+ <font face="Monospace">backLeftMotor.setPower(speed);</font>
+ <font face="Monospace">backRightMotor.setPower(speed);</font>
+
+ <font face="Monospace">// wait for move to complete</font>
+ <font face="Monospace">while (frontLeftMotor.isBusy() &amp;&amp; frontRightMotor.isBusy() &amp;&amp;</font>
+ <font face="Monospace">backLeftMotor.isBusy() &amp;&amp; backRightMotor.isBusy()) {</font>
+
+ <font face="Monospace">// Display it for the driver.</font>
+ <font face="Monospace">telemetry.addLine(&quot;Move Foward&quot;);</font>
+ <font face="Monospace">telemetry.addData(&quot;Target&quot;, &quot;%7d :%7d&quot;, lfPos, rfPos, lrPos, rrPos);</font>
+ <font face="Monospace">telemetry.addData(&quot;Actual&quot;, &quot;%7d :%7d&quot;, frontLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">frontRightMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">backRightMotor.getCurrentPosition());</font>
+ <font face="Monospace">telemetry.update();</font>
+ <font face="Monospace">}</font>
+
+ <font face="Monospace">// Stop all motion;</font>
+ <font face="Monospace">frontLeftMotor.setPower(0);</font>
+ <font face="Monospace">frontRightMotor.setPower(0);</font>
+ <font face="Monospace">backLeftMotor.setPower(0);</font>
+ <font face="Monospace">backRightMotor.setPower(0);</font>
+ <font face="Monospace">}</font>
+<font face="Monospace">private void moveRight(int howMuch, double speed) {</font>
+ <font face="Monospace">// howMuch is in mm. A negative howMuch moves backward.</font>
+
+ <font face="Monospace">// fetch motor positions</font>
+ <font face="Monospace">lfPos = frontLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rfPos = frontRightMotor.getCurrentPosition();</font>
+ <font face="Monospace">lrPos = backLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rrPos = backRightMotor.getCurrentPosition();</font>
+
+ <font face="Monospace">// calculate new targets</font>
+ <font face="Monospace">lfPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">rfPos -= howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">lrPos -= howMuch * DRIVE_COUNTS_PER_MM;</font>
+ <font face="Monospace">rrPos += howMuch * DRIVE_COUNTS_PER_MM;</font>
+
+ <font face="Monospace">// move robot to new position</font>
+ <font face="Monospace">frontLeftMotor.setTargetPosition(lfPos);</font>
+ <font face="Monospace">frontRightMotor.setTargetPosition(rfPos);</font>
+ <font face="Monospace">backLeftMotor.setTargetPosition(lrPos);</font>
+ <font face="Monospace">backRightMotor.setTargetPosition(rrPos);</font>
+ <font face="Monospace">frontLeftMotor.setPower(speed);</font>
+ <font face="Monospace">frontRightMotor.setPower(speed);</font>
+ <font face="Monospace">backLeftMotor.setPower(speed);</font>
+ <font face="Monospace">backRightMotor.setPower(speed);</font>
+
+ <font face="Monospace">// wait for move to complete</font>
+ <font face="Monospace">while (frontLeftMotor.isBusy() &amp;&amp; frontRightMotor.isBusy() &amp;&amp;</font>
+ <font face="Monospace">backLeftMotor.isBusy() &amp;&amp; backRightMotor.isBusy()) {</font>
+
+ <font face="Monospace">// Display it for the driver.</font>
+ <font face="Monospace">telemetry.addLine(&quot;Strafe Right&quot;);</font>
+ <font face="Monospace">telemetry.addData(&quot;Target&quot;, &quot;%7d :%7d&quot;, lfPos, rfPos, lrPos, rrPos);</font>
+ <font face="Monospace">telemetry.addData(&quot;Actual&quot;, &quot;%7d :%7d&quot;, frontLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">frontRightMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">backRightMotor.getCurrentPosition());</font>
+ <font face="Monospace">telemetry.update();</font>
+ <font face="Monospace">}</font>
+
+ <font face="Monospace">// Stop all motion;</font>
+ <font face="Monospace">frontLeftMotor.setPower(0);</font>
+ <font face="Monospace">frontRightMotor.setPower(0);</font>
+ <font face="Monospace">backLeftMotor.setPower(0);</font>
+ <font face="Monospace">backRightMotor.setPower(0);</font>
+
+ <font face="Monospace">}</font>
+
+ <font face="Monospace">private void turnClockwise(int whatAngle, double speed) {</font>
+ <font face="Monospace">// whatAngle is in degrees. A negative whatAngle turns counterclockwise.</font>
+
+ <font face="Monospace">// fetch motor positions</font>
+ <font face="Monospace">lfPos = frontLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rfPos = frontRightMotor.getCurrentPosition();</font>
+ <font face="Monospace">lrPos = backLeftMotor.getCurrentPosition();</font>
+ <font face="Monospace">rrPos = backRightMotor.getCurrentPosition();</font>
+
+ <font face="Monospace">// calculate new targets</font>
+ <font face="Monospace">lfPos += whatAngle * clicksPerDeg;</font>
+ <font face="Monospace">rfPos -= whatAngle * clicksPerDeg;</font>
+ <font face="Monospace">lrPos += whatAngle * clicksPerDeg;</font>
+ <font face="Monospace">rrPos -= whatAngle * clicksPerDeg;</font>
+
+ <font face="Monospace">// move robot to new position</font>
+ <font face="Monospace">frontLeftMotor.setTargetPosition(lfPos);</font>
+ <font face="Monospace">frontRightMotor.setTargetPosition(rfPos);</font>
+ <font face="Monospace">backLeftMotor.setTargetPosition(lrPos);</font>
+ <font face="Monospace">backRightMotor.setTargetPosition(rrPos);</font>
+ <font face="Monospace">frontLeftMotor.setPower(speed);</font>
+ <font face="Monospace">frontRightMotor.setPower(speed);</font>
+ <font face="Monospace">backLeftMotor.setPower(speed);</font>
+ <font face="Monospace">backRightMotor.setPower(speed);</font>
+
+ <font face="Monospace">// wait for move to complete</font>
+ <font face="Monospace">while (frontLeftMotor.isBusy() &amp;&amp; frontRightMotor.isBusy() &amp;&amp;</font>
+ <font face="Monospace">backLeftMotor.isBusy() &amp;&amp; backRightMotor.isBusy()) {</font>
+
+ <font face="Monospace">// Display it for the driver.</font>
+ <font face="Monospace">telemetry.addLine(&quot;Turn Clockwise&quot;);</font>
+ <font face="Monospace">telemetry.addData(&quot;Target&quot;, &quot;%7d :%7d&quot;, lfPos, rfPos, lrPos, rrPos);</font>
+ <font face="Monospace">telemetry.addData(&quot;Actual&quot;, &quot;%7d :%7d&quot;, frontLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">frontRightMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(),</font>
+ <font face="Monospace">backRightMotor.getCurrentPosition());</font>
+ <font face="Monospace">telemetry.update();</font>
+ <font face="Monospace">}</font>
+
+ <font face="Monospace">// Stop all motion;</font>
+ <font face="Monospace">frontLeftMotor.setPower(0);</font>
+ <font face="Monospace">frontRightMotor.setPower(0);</font>
+ <font face="Monospace">backLeftMotor.setPower(0);</font>
+ <font face="Monospace">backRightMotor.setPower(0);</font>
+ <font face="Monospace">}</font></pre><p style="margin-bottom: 0cm">
+<br/>
+
+</p>
+</body>
+</html>
